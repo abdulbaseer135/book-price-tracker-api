@@ -1,0 +1,57 @@
+services:
+  # PostgreSQL Relational Database Service
+  postgres:
+    image: postgres:16-alpine
+    container_name: book_tracker_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-book_tracker}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-book_tracker}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - book_network
+
+  # FastAPI Web Application & Scraper Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: book_tracker_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database connection configuration pointing to the internal Docker service 'postgres'
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-book_tracker}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-book_tracker}
+      SCRAPER_BASE_URL: https://books.toscrape.com/
+      SCRAPER_REQUEST_TIMEOUT: 15.0
+      SCRAPER_MAX_RETRIES: 3
+    ports:
+      - "8000:8000"
+    networks:
+      - book_network
+
+volumes:
+  # Persistent volume for PostgreSQL data
+  postgres_data:
+    driver: local
+
+networks:
+  # Isolated bridge network for internal inter-service communication
+  book_network:
+    driver: bridge
