@@ -137,19 +137,19 @@ book-price-tracker/
 
 The application is configured using environment variables. See [`.env.example`](./.env.example).
 
-| Variable | Default Value | Description |
+| Variable | Notes | Description |
 | :--- | :--- | :--- |
-| `POSTGRES_USER` | *(required)* | PostgreSQL username |
-| `POSTGRES_PASSWORD` | *(required)* | PostgreSQL password (set in `.env`; never commit real secrets) |
-| `POSTGRES_DB` | *(required)* | Database name |
-| `POSTGRES_HOST` | `localhost` locally; Compose sets `postgres` | Database hostname |
-| `POSTGRES_PORT` | `5432` | Database port |
-| `DATABASE_URL` | *(optional; otherwise assembled from POSTGRES_\*)* | Full connection string |
-| `SCRAPER_BASE_URL` | `https://books.toscrape.com/` | Target scraper URL |
-| `SCRAPER_REQUEST_TIMEOUT` | `15.0` | HTTP request timeout in seconds |
-| `SCRAPER_MAX_RETRIES` | `3` | Retries on network failures |
+| `POSTGRES_USER` | *(required — set in `.env`)* | PostgreSQL username |
+| `POSTGRES_PASSWORD` | *(required — set in `.env`; never commit real secrets)* | PostgreSQL password |
+| `POSTGRES_DB` | *(required — set in `.env`)* | Database name |
+| `POSTGRES_HOST` | Default `localhost` locally; Compose sets `postgres` | Database hostname |
+| `POSTGRES_PORT` | Default `5432` | Database port |
+| `DATABASE_URL` | Optional; otherwise assembled from `POSTGRES_*` | Full connection string |
+| `SCRAPER_BASE_URL` | Default `https://books.toscrape.com/` | Target scraper URL |
+| `SCRAPER_REQUEST_TIMEOUT` | Default `15.0` | HTTP request timeout in seconds |
+| `SCRAPER_MAX_RETRIES` | Default `3` | Retries on network failures |
 
-**Required setup:** copy [`.env.example`](./.env.example) to `.env` and set your credentials before starting the app (Docker or local).
+**Required setup:** copy [`.env.example`](./.env.example) to `.env`, replace the placeholder credentials with your own values, then start the app (Docker or local).
 
 ```bash
 # Linux / macOS
@@ -162,7 +162,9 @@ copy .env.example .env
 Copy-Item .env.example .env
 ```
 
-Edit `.env` and replace `change_me` with your PostgreSQL password. Docker Compose reads `.env` for variable substitution and connects the API to the service hostname `postgres`. Local (non-Docker) runs should keep `POSTGRES_HOST=localhost`.
+Edit `.env` and set `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB`. Docker Compose reads `.env` for variable substitution and connects the API to the service hostname `postgres`. Local (non-Docker) runs should keep `POSTGRES_HOST=localhost`.
+
+There are **no** hardcoded PostgreSQL credential defaults in the application or Compose files — a `.env` (or exported environment variables) is required.
 
 ---
 

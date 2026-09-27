@@ -1,7 +1,7 @@
 """Pytest test suite configuration and fixtures."""
 import os
 
-# Required before importing app settings (no hardcoded credential defaults in config).
+# Required before importing app settings (POSTGRES_USER / PASSWORD / DB have no code defaults).
 os.environ.setdefault("POSTGRES_USER", "test")
 os.environ.setdefault("POSTGRES_PASSWORD", "test")
 os.environ.setdefault("POSTGRES_DB", "test")
