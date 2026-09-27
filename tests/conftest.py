@@ -1,4 +1,11 @@
 """Pytest test suite configuration and fixtures."""
+import os
+
+# Required before importing app settings (no hardcoded credential defaults in config).
+os.environ.setdefault("POSTGRES_USER", "test")
+os.environ.setdefault("POSTGRES_PASSWORD", "test")
+os.environ.setdefault("POSTGRES_DB", "test")
+
 import pytest
 from datetime import datetime, timezone
 from sqlalchemy import create_engine

@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import computed_field
+from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,10 +12,10 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     LOG_LEVEL: str = "INFO"
 
-    # PostgreSQL Database Credentials
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
-    POSTGRES_DB: str = "book_tracker"
+    # PostgreSQL Database Credentials (required — no hardcoded password defaults)
+    POSTGRES_USER: str = Field(..., description="PostgreSQL username")
+    POSTGRES_PASSWORD: str = Field(..., description="PostgreSQL password")
+    POSTGRES_DB: str = Field(..., description="PostgreSQL database name")
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
 

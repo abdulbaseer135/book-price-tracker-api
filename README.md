@@ -139,9 +139,9 @@ The application is configured using environment variables. See [`.env.example`](
 
 | Variable | Default Value | Description |
 | :--- | :--- | :--- |
-| `POSTGRES_USER` | `postgres` | PostgreSQL username |
-| `POSTGRES_PASSWORD` | `postgres` | PostgreSQL password |
-| `POSTGRES_DB` | `book_tracker` | Database name |
+| `POSTGRES_USER` | *(required)* | PostgreSQL username |
+| `POSTGRES_PASSWORD` | *(required)* | PostgreSQL password (set in `.env`; never commit real secrets) |
+| `POSTGRES_DB` | *(required)* | Database name |
 | `POSTGRES_HOST` | `localhost` locally; Compose sets `postgres` | Database hostname |
 | `POSTGRES_PORT` | `5432` | Database port |
 | `DATABASE_URL` | *(optional; otherwise assembled from POSTGRES_\*)* | Full connection string |
@@ -149,9 +149,7 @@ The application is configured using environment variables. See [`.env.example`](
 | `SCRAPER_REQUEST_TIMEOUT` | `15.0` | HTTP request timeout in seconds |
 | `SCRAPER_MAX_RETRIES` | `3` | Retries on network failures |
 
-**Docker Compose:** Uses the defaults configured in `docker-compose.yml` (and optional host `.env` for substitution). You do not need a project `.env` file for Compose unless you want to override credentials. Inside Compose, the API connects to the service hostname `postgres`.
-
-**Local (non-Docker) setup:** Copy the example file, then point `POSTGRES_HOST` at `localhost` (or set `DATABASE_URL`):
+**Required setup:** copy [`.env.example`](./.env.example) to `.env` and set your credentials before starting the app (Docker or local).
 
 ```bash
 # Linux / macOS
@@ -159,7 +157,12 @@ cp .env.example .env
 
 # Windows Command Prompt
 copy .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
 ```
+
+Edit `.env` and replace `change_me` with your PostgreSQL password. Docker Compose reads `.env` for variable substitution and connects the API to the service hostname `postgres`. Local (non-Docker) runs should keep `POSTGRES_HOST=localhost`.
 
 ---
 
@@ -168,7 +171,12 @@ copy .env.example .env
 ### Option 1: Running with Docker Compose (Recommended)
 
 ```bash
-# Build and launch both the PostgreSQL database and FastAPI containers
+# 1. Create and configure environment file
+cp .env.example .env   # or: copy .env.example .env
+
+# 2. Edit .env and set POSTGRES_USER / POSTGRES_PASSWORD / POSTGRES_DB
+
+# 3. Build and launch PostgreSQL + FastAPI
 docker compose up --build
 ```
 *(Or `docker-compose up --build` if using Docker Compose v1)*
